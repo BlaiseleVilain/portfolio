@@ -12,6 +12,8 @@
       --cream: #FFF6E1;
       --black: #151515;
       --pink: #FF0062;
+      --proj-accent-a: rgba(255, 0, 98, 0);
+      --proj-accent-b: rgba(21, 21, 21, 0);
     }
 
     * {
@@ -22,6 +24,8 @@
 
     html {
       scroll-behavior: smooth;
+      /* Évite les "layout shifts" quand la scrollbar apparaît/disparaît */
+      scrollbar-gutter: stable;
     }
 
     body {
@@ -30,9 +34,43 @@
       color: var(--black);
       cursor: none;
       overflow-x: hidden;
+      overflow-y: scroll;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      min-height: 100svh;
+      transition: background 600ms ease;
+      position: relative;
+    }
+
+    /* Calque de dégradé global (visible même si une section a son propre fond) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(1100px 700px at 15% 8%, var(--proj-accent-a), rgba(242, 237, 220, 0) 66%),
+        radial-gradient(1100px 700px at 85% 18%, var(--proj-accent-b), rgba(242, 237, 220, 0) 62%);
+      opacity: 1;
+      transition: background 600ms ease;
+    }
+
+    /* S'assure que le contenu passe au-dessus du calque */
+    main, header, section, footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Active le dégradé sur la page projets (fonds semi-transparents) */
+    body.proj-gradient-on #projects .proj-hero {
+      background: rgba(21, 21, 21, 0.86);
+    }
+
+    body.proj-gradient-on #projects .proj-detail {
+      background: rgba(255, 246, 225, 0.86);
+      border-radius: 12px;
     }
 
     /* CURSOR */
@@ -290,6 +328,8 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      min-height: 100vh;
+      min-height: 100svh;
     }
 
 
@@ -308,35 +348,36 @@
     }
 
     .hero-typo-wrap {
-      padding: 2.5rem 0 2rem;
+      padding: 1.7rem 0 1.25rem;
       position: relative;
       overflow: hidden;
       line-height: 0;
+      margin-top: 1.35rem;
     }
 
     .hero-logo-left {
       position: absolute;
-      left: -22vw;
-      top: 50%;
+      left: -14vw;
+      top: 54%;
       transform: translateY(-56%);
-      height: clamp(165px, 26vw, 330px);
+      height: clamp(120px, 20vw, 260px);
       width: auto;
       pointer-events: none;
     }
 
     .hero-logo-right {
       position: absolute;
-      right: -22vw;
-      top: 50%;
+      right: -14vw;
+      top: 54%;
       transform: translateY(-56%) scaleX(-1);
-      height: clamp(165px, 26vw, 330px);
+      height: clamp(120px, 20vw, 260px);
       width: auto;
       pointer-events: none;
     }
 
     .hero-typo-img {
       display: block;
-      width: 60%;
+      width: 42%;
       margin: 0 auto;
       position: relative;
       right: 2%;
@@ -345,7 +386,7 @@
     /* MARQUEE */
     .marquee-wrap {
       overflow: hidden;
-      padding: 2rem 0;
+      padding: 1.25rem 0;
     }
 
     .marquee-track {
@@ -355,11 +396,11 @@
     }
 
     .marquee-item {
-      font-size: clamp(1.1rem, 2.4vw, 1.8rem);
+      font-size: clamp(0.95rem, 2vw, 1.55rem);
       font-weight: 400;
       font-style: italic;
       color: var(--pink);
-      padding: 0 1.2rem;
+      padding: 0 0.9rem;
       white-space: nowrap;
     }
 
@@ -375,6 +416,119 @@
       to {
         transform: translateX(-50%);
       }
+    }
+
+    /* HERO — placeholders présentation (image bandeau + texte) */
+    .hero-pres {
+      /* Padding uniquement côté texte (image flush à droite/haut/bas) */
+      padding: 0 0 0 7.25rem;
+      margin-top: -0.15rem;
+      position: relative;
+      background:
+        radial-gradient(900px 520px at 18% 18%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 62%),
+        radial-gradient(900px 520px at 82% 32%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 60%),
+        #0b0b0b;
+      border-top: 1px solid rgba(255, 246, 225, 0.06);
+      border-bottom: 1px solid rgba(255, 246, 225, 0.06);
+    }
+
+    .hero-pres-card {
+      display: grid;
+      grid-template-columns: 1fr min(380px, 38vw);
+      grid-template-areas: "text img";
+      gap: 0;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .hero-pres-img {
+      grid-area: img;
+      border-radius: 0;
+      display: block;
+      overflow: hidden;
+      height: 100%;
+      min-height: clamp(260px, 32vh, 420px);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.45);
+      padding: 0;
+    }
+
+    /* contain = fichier entier, jamais rogné sur les côtés. Colonne plus large + min-height = photo affichée plus « zoomée » sans scale. Alignée bas-gauche. */
+    .hero-pres-img > img.hero-pres-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: left bottom;
+      display: block;
+    }
+
+    .hero-pres-text {
+      /* Placeholder texte */
+      grid-area: text;
+      padding: 0.75rem 1.8rem 1.1rem 3.1rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.65rem;
+      min-height: 100%;
+    }
+
+    /* Supprime les marges par défaut et compacte le bloc */
+    .hero-pres-text .hero-pres-kicker,
+    .hero-pres-text .hero-pres-title,
+    .hero-pres-text .hero-pres-desc {
+      margin: 0 !important;
+    }
+
+    .hero-pres-text .hero-pres-desc {
+      line-height: 1.55 !important;
+    }
+
+    /* Empile seulement sur très petit écran */
+    @media (max-width: 680px) {
+      .hero-pres-card {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "img"
+          "text";
+      }
+
+      .hero-pres-img {
+        aspect-ratio: 21 / 10;
+      }
+
+      .hero-pres {
+        margin-top: -0.25rem;
+        padding: 1.1rem 1.2rem 1.25rem;
+      }
+    }
+
+    .hero-pres-kicker {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.55);
+    }
+
+    .hero-pres-title {
+      font-size: clamp(1.15rem, 2.3vw, 1.55rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: rgba(255, 246, 225, 0.92);
+    }
+
+    .hero-pres-desc {
+      font-size: clamp(0.78rem, 1.15vw, 0.98rem);
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(255, 246, 225, 0.68);
+      max-width: 62ch;
     }
 
     /* HERO BOTTOM — texte intro */
@@ -410,6 +564,7 @@
     .proj-band {
       overflow: hidden;
       padding: 2rem 0;
+      margin-top: 3.6rem;
     }
 
     .proj-band-track {
@@ -484,9 +639,12 @@
       overflow: hidden;
       position: relative;
       cursor: pointer;
-      background: #222222;
+      background: rgba(10, 10, 10, 0.55);
+      border: 1px solid rgba(255, 246, 225, 0.08);
       display: flex;
       flex-direction: column;
+      box-shadow: 0 18px 70px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(10px);
     }
 
     @media(min-width:900px) {
@@ -500,7 +658,7 @@
       aspect-ratio: 2/3;
       position: relative;
       overflow: hidden;
-      background: #222222;
+      background: rgba(10, 10, 10, 0.5);
       flex-shrink: 0;
     }
 
@@ -580,7 +738,11 @@
 
     .c-card-foot {
       padding: 1rem 1rem 0.5rem;
-      background: var(--cream);
+      background:
+        radial-gradient(120% 160% at 18% 35%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 60%),
+        radial-gradient(120% 160% at 82% 20%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 58%),
+        #0b0b0b;
+      border-top: 1px solid rgba(255, 246, 225, 0.10);
     }
 
     .c-card-foot-title {
@@ -588,7 +750,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.023em;
-      color: var(--black);
+      color: rgba(255, 246, 225, 0.92);
       margin-bottom: 0.2rem;
     }
 
@@ -597,7 +759,7 @@
       font-weight: 400;
       letter-spacing: 0.081em;
       text-transform: uppercase;
-      color: #888888;
+      color: rgba(255, 246, 225, 0.55);
     }
 
     .carousel-nav {
@@ -610,26 +772,66 @@
     .car-btn {
       width: 2.6rem;
       height: 2.6rem;
-      border-radius: 50%;
-      border: 1.5px solid var(--black);
-      background: transparent;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 246, 225, 0.18);
+      background:
+        radial-gradient(120% 160% at 18% 35%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 60%),
+        radial-gradient(120% 160% at 82% 20%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 58%),
+        #0b0b0b;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1rem;
-      color: var(--black);
-      transition: all .2s;
+      color: rgba(255, 246, 225, 0.92);
+      transition: transform .15s, background .2s, border-color .2s, color .2s, box-shadow .2s;
     }
 
     .car-btn:hover {
-      background: var(--black);
-      color: var(--cream);
+      transform: translateY(-1px);
+      border-color: rgba(255, 0, 98, 0.65);
+      box-shadow: 0 0 0 2px rgba(255, 0, 98, 0.18), 0 18px 50px rgba(0, 0, 0, 0.35);
+      color: rgba(255, 246, 225, 0.98);
     }
 
     .car-btn:disabled {
       opacity: 0.2;
       pointer-events: none;
+    }
+
+    .carousel-nav .btn {
+      padding: 0.75rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 246, 225, 0.18);
+      background:
+        radial-gradient(120% 160% at 18% 35%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 60%),
+        radial-gradient(120% 160% at 82% 20%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 58%),
+        #0b0b0b;
+      color: rgba(255, 246, 225, 0.92);
+      transition: transform .15s, background .2s, color .2s, border-color .2s, box-shadow .2s;
+    }
+
+    .carousel-nav .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 0, 98, 0.65);
+      box-shadow: 0 0 0 2px rgba(255, 0, 98, 0.18), 0 18px 50px rgba(0, 0, 0, 0.35);
+      color: rgba(255, 246, 225, 0.98);
+    }
+
+    /* Header logo hover highlight (haut gauche) */
+    .nav-logo img {
+      transition: filter .2s ease, transform .2s ease;
+      transform-origin: 0% 50%;
+    }
+
+    .nav-logo:hover img {
+      /* Teinte rose + surbrillance */
+      filter:
+        brightness(0) saturate(100%)
+        invert(14%) sepia(96%) saturate(6367%) hue-rotate(330deg) brightness(104%) contrast(101%)
+        drop-shadow(0 0 14px rgba(255, 0, 98, 0.55))
+        drop-shadow(0 0 30px rgba(255, 0, 98, 0.18));
+      transform: translateY(-1px);
     }
 
     /* BTN */
@@ -665,7 +867,7 @@
 
     /* PROJECTS PAGE */
     #projects {
-      background: var(--cream);
+      background: transparent;
       padding-top: 44px;
     }
 
@@ -673,6 +875,10 @@
       background: var(--black);
       padding: 4.5rem 3rem 3rem;
       overflow: hidden;
+      /* Pleine largeur écran (full-bleed), même si un parent est centré */
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
     }
 
     .pmb-wrap {
@@ -805,8 +1011,11 @@
       grid-template-columns: 1fr auto;
       align-items: center;
       padding: 0.9rem 1.1rem;
-      background: var(--cream);
-      border-top: 1.5px solid var(--black);
+      background:
+        radial-gradient(120% 160% at 18% 35%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 60%),
+        radial-gradient(120% 160% at 82% 20%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 58%),
+        #0b0b0b;
+      border-top: 1px solid rgba(255, 246, 225, 0.18);
     }
 
     .pcat {
@@ -822,13 +1031,13 @@
       font-size: 1rem;
       font-weight: 300;
       font-style: italic;
-      color: var(--black);
+      color: rgba(255, 246, 225, 0.92);
     }
 
     .pyear {
       font-size: 0.65rem;
       font-weight: 400;
-      color: #888888;
+      color: rgba(255, 246, 225, 0.55);
       letter-spacing: 0.045em;
     }
 
@@ -863,17 +1072,64 @@
 
     .detail-hdr {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      margin-bottom: 3rem;
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+      margin-bottom: 4.6rem;
       align-items: start;
+      justify-items: center;
+      text-align: center;
     }
+
+    /* Colonne titre/texte : centrage + rythme */
+    .detail-hdr > div:first-child {
+      display: grid;
+      justify-items: center;
+      gap: 0.95rem;
+      max-width: 980px;
+      width: min(980px, 100%);
+    }
+
+    .detail-kicker {
+      font-size: 0.55rem;
+      font-weight: 900;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.92);
+      background: linear-gradient(135deg, rgba(255, 0, 98, 0.98), rgba(255, 0, 98, 0.70));
+      border: 1px solid rgba(255, 246, 225, 0.22);
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      box-shadow: 0 20px 70px rgba(255, 0, 98, 0.22);
+      margin: 0 auto;
+      transform: translateY(-1.1rem) rotate(-0.6deg);
+      position: relative;
+    }
+
+    .detail-kicker::before { content: none; }
 
     .detail-title {
       font-size: clamp(3rem, 7vw, 7rem);
       font-weight: 900;
-      line-height: 0.88;
+      line-height: 0.96;
+      letter-spacing: -0.03em;
       color: var(--black);
+      text-wrap: balance;
+      position: relative;
+    }
+
+    .detail-title::after { display: none; }
+
+    .detail-lead {
+      margin-top: 0;
+      max-width: 62ch;
+      font-size: clamp(0.92rem, 1.15vw, 1.08rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(21, 21, 21, 0.78);
     }
 
     .meta-row {
@@ -891,6 +1147,51 @@
       font-weight: 700;
     }
 
+    .detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 0.2rem;
+      max-width: 980px;
+      width: min(980px, 100%);
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.55rem;
+      padding: 0.62rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(21, 21, 21, 0.18);
+      background: rgba(255, 246, 225, 0.78);
+      box-shadow: 0 10px 30px rgba(21, 21, 21, 0.08);
+      max-width: 100%;
+    }
+
+    .meta-chip .k {
+      font-size: 0.52rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(21, 21, 21, 0.55);
+      white-space: nowrap;
+    }
+
+    .meta-chip .v {
+      font-size: 0.78rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(21, 21, 21, 0.92);
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 900px) {
+      .detail-hdr { margin-bottom: 3.6rem; gap: 1.3rem; }
+      .detail-hdr > div:first-child { gap: 0.75rem; }
+    }
+
     .detail-imgs {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -899,10 +1200,513 @@
       margin-bottom: 3rem;
     }
 
+    /* Galerie 3 colonnes × 3 lignes (9 cases) */
+    .detail-imgs.is-nine-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: var(--black);
+    }
+
+    .detail-imgs.is-nine-grid .detail-img-ph {
+      /* Portrait type A3 (297×420) : largeur fixe, hauteur augmentée */
+      aspect-ratio: 297 / 420;
+    }
+
+    /* Trans Musicales : grille de 10 cases */
+    .detail-imgs.is-ten-grid {
+      /* 2 colonnes équivalentes, même hauteur en bas */
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--black);
+    }
+
+    .detail-imgs.is-ten-grid .detail-img-ph {
+      /* Même format pour toutes les cases => colonnes alignées */
+      aspect-ratio: 4 / 5;
+      background: #1c1c1c;
+      overflow: hidden;
+      display: block;
+    }
+
+    /* CASE 03 et CASE 04 : pleine largeur, l'une sous l'autre, horizontales */
+    .detail-imgs.is-ten-grid .detail-img-ph:nth-child(3),
+    .detail-imgs.is-ten-grid .detail-img-ph:nth-child(4) {
+      grid-column: 1 / -1;
+      aspect-ratio: 16 / 9;
+    }
+
+    .detail-imgs.is-ten-grid .detail-img-ph img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: 50% 50% !important;
+      background: transparent !important;
+      transform: none !important;
+    }
+
+    /* Live Session : 6 carrés + 2 portraits A3 + lecteur YouTube */
+    .detail-imgs.is-live-session {
+      display: block;
+      background: transparent;
+      margin-bottom: 3rem;
+    }
+
+    .ls-grid {
+      display: grid;
+      gap: 1.5px;
+      background: var(--black);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 14px 60px rgba(21, 21, 21, 0.14);
+    }
+
+    .ls-grid-squares {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 14px;
+    }
+
+    .ls-grid-portraits {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 14px;
+    }
+
+    .ls-cell {
+      position: relative;
+      background: #f0ead8;
+      overflow: hidden;
+    }
+
+    .ls-cell.is-square {
+      aspect-ratio: 1 / 1;
+    }
+
+    .ls-cell.is-a3 {
+      aspect-ratio: 297 / 420;
+    }
+
+    .ls-cell img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transform: none !important;
+    }
+
+    .ls-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(21, 21, 21, 0.65);
+      border: 1px dashed rgba(21, 21, 21, 0.35);
+      background: rgba(255, 246, 225, 0.7);
+    }
+
+    .ls-youtube {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--black);
+      box-shadow: 0 14px 60px rgba(21, 21, 21, 0.14);
+      position: relative;
+      aspect-ratio: 16 / 9;
+    }
+
+    .ls-youtube iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .ls-grid-squares { grid-template-columns: repeat(2, 1fr); }
+      .ls-grid-portraits { grid-template-columns: 1fr; }
+    }
+
+    /* AVEC LA PAIX : 1 grande pleine largeur + 2 rectangles + 2 carrés */
+    .detail-imgs.is-avec-paix {
+      display: block;
+      background: transparent;
+      margin-bottom: 3rem;
+    }
+
+    .ap-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .ap-row {
+      display: grid;
+      gap: 1.5px;
+      background: var(--black);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 14px 60px rgba(21, 21, 21, 0.14);
+    }
+
+    .ap-row.ap-portraits {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ap-cell {
+      position: relative;
+      background: #f0ead8;
+      overflow: hidden;
+    }
+
+    .ap-cell.is-hero {
+      aspect-ratio: auto;
+    }
+
+    .ap-cell.is-rect {
+      aspect-ratio: auto;
+    }
+
+    .ap-cell.is-portrait {
+      aspect-ratio: 297 / 420;
+    }
+
+    .ap-cell img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transform: none !important;
+    }
+
+    /* Hero + rectangles : respecte le ratio natif, sans zones vides */
+    .ap-cell.is-hero img,
+    .ap-cell.is-rect img {
+      height: auto;
+      object-fit: initial;
+    }
+
+    @media (max-width: 900px) {
+      .ap-row.ap-portraits { grid-template-columns: 1fr; }
+      .ap-cell.is-rect { aspect-ratio: auto; }
+    }
+
+    /* Pochettes : 2 colonnes, covers carrés (10 cases) */
+    .detail-imgs.is-album-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5px;
+      background: var(--black);
+    }
+
+    .detail-imgs.is-album-grid .detail-img-ph {
+      aspect-ratio: 1 / 1;
+    }
+
+    /* Titrages : 1 grande verticale + 1 A3 paysage */
+    .detail-imgs.is-titrage-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5px;
+      background: var(--black);
+    }
+
+    .detail-imgs.is-titrage-grid .detail-img-ph {
+      /* Permet de "dézoomer" (moins de crop) sans changer la largeur */
+      background: transparent;
+      padding: 0;
+      box-sizing: border-box;
+      display: block;
+    }
+
+    .detail-imgs.is-titrage-grid .detail-img-ph img {
+      object-fit: contain;
+      object-position: 50% 50%;
+      background: transparent;
+      height: auto;
+    }
+
+    .detail-imgs.is-titrage-grid .detail-img-ph:first-child {
+      /* Hauteur auto (épouse l'image) */
+      aspect-ratio: auto;
+    }
+
+    .detail-imgs.is-titrage-grid .detail-img-ph:nth-child(2) {
+      /* Hauteur auto (épouse l'image) */
+      aspect-ratio: auto;
+    }
+
+    .detail-imgs.is-titrage-grid .detail-img-ph:nth-child(3) {
+      /* Hauteur auto (épouse l'image) */
+      aspect-ratio: auto;
+    }
+
+    .detail-imgs.is-column {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      background: transparent;
+    }
+
+    /* Spécimen : photo gauche + PDF droite, puis PDF pleine largeur */
+    .detail-imgs.is-specimen-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      background: transparent;
+      margin-bottom: 3rem;
+    }
+
+    .specimen-container {
+      width: 100%;
+      margin: 0;
+    }
+
+    .specimen-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      .specimen-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .specimen-img {
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: 0 14px 60px rgba(21, 21, 21, 0.14);
+      height: min(78vh, 860px);
+    }
+
+    .specimen-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      image-rendering: auto;
+      transform: none !important;
+    }
+
+    /* PDF viewer au format "case" (même hauteur que la galerie) */
+    .pdf-viewer.is-case {
+      height: auto;
+      aspect-ratio: 4/3;
+    }
+
+    .detail-card {
+      width: 100%;
+      background: #0f0f0f;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .detail-card.media {
+      aspect-ratio: 16/9;
+    }
+
+    .detail-card.pdf {
+      height: min(78vh, 860px);
+    }
+
+    .detail-card-hdr {
+      padding: 0.85rem 1rem;
+      background: rgba(0, 0, 0, 0.22);
+      color: rgba(242, 237, 220, 0.92);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(242, 237, 220, 0.12);
+    }
+
+    /* PDF viewers (style commun, direction artistique) */
+    .pdf-viewer {
+      width: 100%;
+      background: rgba(21, 21, 21, 0.06);
+      border: 1px solid rgba(21, 21, 21, 0.22);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 14px 50px rgba(21, 21, 21, 0.08);
+      position: relative;
+    }
+
+    .pdf-viewer.is-tall {
+      height: min(78vh, 860px);
+    }
+
+    .pdf-viewer.is-mid {
+      height: min(70vh, 760px);
+    }
+
+    .pdf-viewer__hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      background: rgba(255, 246, 225, 0.82);
+      border-bottom: 1px solid rgba(21, 21, 21, 0.16);
+      color: rgba(21, 21, 21, 0.92);
+      backdrop-filter: blur(10px);
+    }
+
+    .pdf-viewer__title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .pdf-viewer iframe,
+    .detail-card iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #0f0f0f;
+    }
+
+    .pdf-viewer iframe {
+      background: #111;
+    }
+
+    /* Spécimen : 1ère image sans "cadre" */
+    .detail-hero-img {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+      box-shadow: 0 14px 60px rgba(21, 21, 21, 0.14);
+    }
+
+    .detail-img-ph {
+      aspect-ratio: 4/3;
+      background: #1c1c1c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #252525;
+      overflow: hidden;
+    }
+
+    .detail-img-ph img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      display: block;
+      image-rendering: auto;
+    }
+    
+    .detail-img-ph:has(img) {
+      cursor: zoom-in;
+    }
+
+    /* PDF (séparé de la galerie) */
+    .detail-pdf-wrap {
+      width: 100%;
+      margin: 1.8rem auto 3rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .detail-pdf {
+      width: min(1100px, 100%);
+      height: min(78vh, 860px);
+      background: #0f0f0f;
+      border: 1px solid rgba(0, 0, 0, 0.22);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .detail-pdf-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #0f0f0f;
+    }
+
+    .detail-pdf-hint {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(242, 237, 220, 0.75);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(242, 237, 220, 0.18);
+      padding: 0.5rem 0.65rem;
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
+      pointer-events: none;
+    }
+
+    /* Peau d'Âne : image haut-gauche légèrement zoomée */
+    .detail-img-ph img.crop-peaudane-tl {
+      object-fit: cover;
+      object-position: 50% 50%;
+      transform: none;
+      transform-origin: 50% 50%;
+    }
+
+    /* Titrages : recadrages ciblés (ajuste object-position si besoin) */
+    .detail-img-ph img.crop-titrage-hero {
+      object-fit: contain;
+      object-position: 50% 50%;
+      transform: none;
+      transform-origin: 50% 50%;
+    }
+
+    .detail-img-ph img.crop-titrage-last {
+      object-fit: contain;
+      object-position: 50% 50%;
+      transform: none;
+      transform-origin: 50% 50%;
+    }
+
+    /* Lightbox (clic = plein écran, re-clic = fermeture) */
+    .img-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.2rem;
+      background: rgba(0, 0, 0, 0.92);
+      cursor: zoom-out;
+    }
+
+    .img-lightbox.open {
+      display: flex;
+    }
+
+    .img-lightbox img {
+      max-width: min(1200px, 100%);
+      max-height: 90vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      background: transparent;
+    }
+
     .detail-videos {
       display: none;
-      width: min(1100px, 100%);
-      margin: 0 auto 3rem;
+      width: 100%;
+      margin: 2.25rem auto 3rem;
       display: none;
       flex-direction: column;
       gap: 2.25rem;
@@ -926,6 +1730,26 @@
       background: #0f0f0f;
     }
 
+    .detail-videos.open {
+      align-items: center;
+    }
+
+    .detail-video-block {
+      width: min(1100px, 100%);
+    }
+
+    .detail-video-block.is-wide {
+      width: 100%;
+      max-width: none;
+    }
+
+    .detail-video-block.is-wide .detail-video {
+      width: 100%;
+      aspect-ratio: 21/9;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
     .detail-video-desc {
       font-size: 0.78rem;
       font-weight: 300;
@@ -934,16 +1758,7 @@
       max-width: 80ch;
     }
 
-    .detail-img-ph {
-      aspect-ratio: 4/3;
-      background: #1c1c1c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 900;
-      color: #252525;
-    }
+    /* .detail-img-ph styles moved above to support real <img> */
 
     .detail-desc {
       max-width: 700px;
@@ -955,8 +1770,241 @@
 
     /* ABOUT */
     #about {
-      background: var(--cream);
+      position: relative;
+      background:
+        radial-gradient(900px 520px at 18% 18%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 62%),
+        radial-gradient(900px 520px at 82% 32%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 60%),
+        #0b0b0b;
       padding-top: 44px;
+    }
+
+    #about .contact-page.about-page {
+      padding: 3.4rem 4rem 3.25rem;
+    }
+
+    #about .contact-body {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: min(920px, 100%);
+      margin-inline: auto;
+      gap: 0;
+    }
+
+    #about .contact-form-raw {
+      width: 100%;
+      top: 0;
+    }
+
+    #about .about-card--cv-only {
+      padding: 1.1rem 1.1rem 1.15rem;
+    }
+
+    .about-paras {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 0.25rem;
+      max-width: 58ch;
+    }
+
+    .about-paras p {
+      font-size: clamp(0.88rem, 1.15vw, 1.02rem);
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(255, 246, 225, 0.68);
+    }
+
+    .about-card {
+      gap: 1.15rem;
+    }
+
+    .about-card-hdr {
+      display: grid;
+      gap: 0.25rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .about-card-title {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.85);
+    }
+
+    .about-card-sub {
+      font-size: 0.85rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(255, 246, 225, 0.55);
+    }
+
+    .about-skill-list {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 0.4rem;
+    }
+
+    .about-skill-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.7);
+    }
+
+    .about-skill-top span:last-child {
+      font-weight: 900;
+      color: rgba(255, 246, 225, 0.55);
+      letter-spacing: 0.1em;
+    }
+
+    .about-skill-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 246, 225, 0.08);
+      border: 1px solid rgba(255, 246, 225, 0.10);
+      overflow: hidden;
+      margin-top: 0.45rem;
+      box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .about-skill-bar i {
+      display: block;
+      height: 100%;
+      background: rgba(255, 0, 98, 0.72);
+      border-right: 1px solid rgba(255, 0, 98, 0.45);
+    }
+
+    .about-tools {
+      margin-top: 0.25rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid rgba(255, 246, 225, 0.08);
+    }
+
+    .about-tools-label {
+      font-size: 0.5rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.55);
+      margin-bottom: 0.7rem;
+    }
+
+    .about-tools-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Override tags on dark background */
+    #about .tool-tag {
+      border-color: rgba(255, 246, 225, 0.18);
+      color: rgba(255, 246, 225, 0.68);
+      background: rgba(255, 246, 225, 0.04);
+    }
+
+    #about .tool-tag:hover {
+      border-color: rgba(255, 0, 98, 0.65);
+      color: rgba(255, 0, 98, 0.92);
+      background: rgba(255, 0, 98, 0.08);
+    }
+
+    .about-cta {
+      margin-top: 0.2rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .about-cta .cfr-send-btn {
+      width: 100%;
+    }
+
+    .about-cta-note {
+      font-size: 0.6rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(255, 246, 225, 0.38);
+    }
+
+    .about-cv {
+      margin-top: 0.1rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .about-cv-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 246, 225, 0.14);
+      background: rgba(0, 0, 0, 0.25);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.35);
+    }
+
+    .about-cv-ph {
+      min-height: 420px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 246, 225, 0.22);
+      background:
+        radial-gradient(120% 160% at 18% 18%, rgba(255, 0, 98, 0.16), rgba(0, 0, 0, 0) 62%),
+        radial-gradient(120% 160% at 82% 32%, rgba(255, 0, 98, 0.10), rgba(0, 0, 0, 0) 60%),
+        rgba(255, 246, 225, 0.035);
+      box-shadow:
+        inset 0 10px 24px rgba(0, 0, 0, 0.38),
+        0 16px 38px rgba(0, 0, 0, 0.35);
+      padding: 1.1rem 1.1rem 1.2rem;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      gap: 0.55rem;
+      color: rgba(255, 246, 225, 0.70);
+    }
+
+    .about-cv-ph-title {
+      font-size: 0.62rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.88);
+    }
+
+    .about-cv-ph-sub {
+      max-width: 46ch;
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.6;
+      color: rgba(255, 246, 225, 0.62);
+    }
+
+    .about-cv-ph-hint {
+      max-width: 56ch;
+      font-size: 0.72rem;
+      font-weight: 300;
+      line-height: 1.55;
+      color: rgba(255, 246, 225, 0.46);
+    }
+
+    #about code {
+      font-size: 0.9em;
+      padding: 0.15em 0.4em;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 246, 225, 0.12);
+      background: rgba(0, 0, 0, 0.32);
+      color: rgba(255, 246, 225, 0.78);
+      white-space: nowrap;
+    }
+
+    .about-cv-frame {
+      width: 100%;
+      height: 560px;
+      border: 1px solid rgba(255, 246, 225, 0.14);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.25);
     }
 
 
@@ -1113,72 +2161,70 @@
 
     /* CONTACT PAGE */
     #contact {
-      background: var(--cream);
       padding-top: 44px;
       position: relative;
+      background:
+        radial-gradient(900px 520px at 18% 18%, rgba(255, 0, 98, 0.22), rgba(0, 0, 0, 0) 62%),
+        radial-gradient(900px 520px at 82% 32%, rgba(255, 0, 98, 0.14), rgba(0, 0, 0, 0) 60%),
+        #0b0b0b;
     }
 
     .contact-page {
-      padding: 5rem 4rem 0;
+      padding: 3.4rem 4rem 0;
     }
 
-    /* Giant title */
-    .contact-giant {
-      line-height: 0.88;
-      letter-spacing: -0.04em;
-      margin-bottom: 1rem;
+    /* Header (style capture) */
+    .contact-hdr {
+      display: grid;
+      gap: 0.9rem;
+      margin-bottom: 1.3rem;
     }
 
-    .contact-giant .line1 {
-      display: block;
-      font-size: clamp(4.5rem, 12vw, 11rem);
-      font-weight: 300;
-      font-style: italic;
-      color: var(--black);
+    /* Décalage vers le bas de TOUT le bloc gauche */
+    .contact-left {
+      transform: translateY(2.6rem);
+    }
+
+    .contact-kicker {
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: rgba(255, 246, 225, 0.55);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .contact-kicker::before {
+      content: "";
+      width: 44px;
+      height: 1px;
+      background: rgba(255, 0, 98, 0.75);
       opacity: 0.85;
     }
 
-    .contact-giant .line2 {
-      display: block;
-      font-size: clamp(5rem, 13vw, 12.5rem);
+    .contact-title {
+      font-size: clamp(2.6rem, 5.2vw, 4.25rem);
       font-weight: 900;
-      font-style: normal;
-      color: var(--pink);
-      padding-left: 5vw;
-      letter-spacing: -0.05em;
+      letter-spacing: -0.03em;
+      line-height: 1.02;
+      color: rgba(255, 246, 225, 0.95);
     }
 
-    /* Thin separator with label */
-    .contact-sep {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin: 2rem 0 4rem;
-    }
-
-    .contact-sep-line {
-      flex: 1;
-      height: 1px;
-      background: var(--black);
-      opacity: 0.15;
-    }
-
-    .contact-sep-label {
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--black);
-      opacity: 0.3;
-      white-space: nowrap;
+    .contact-title .script {
+      display: block;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(255, 0, 98, 0.92);
+      margin-top: 0.25rem;
     }
 
     /* Main layout */
     .contact-body {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-      flex: 1;
+      gap: 4rem;
       align-items: start;
     }
 
@@ -1186,33 +2232,53 @@
     .contact-raw {
       display: flex;
       flex-direction: column;
-      gap: 2.5rem;
+      gap: 1.6rem;
+      padding-top: 0;
     }
 
     .contact-raw-intro {
-      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      font-size: clamp(0.88rem, 1.15vw, 1.05rem);
       font-weight: 300;
       line-height: 1.7;
-      color: var(--black);
-      opacity: 0.6;
+      color: rgba(255, 246, 225, 0.72);
+      opacity: 1;
+      max-width: 52ch;
     }
 
     .contact-raw-intro strong {
       font-weight: 900;
       opacity: 1;
-      color: var(--black);
+      color: rgba(255, 246, 225, 0.92);
     }
 
     .contact-direct {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.75rem;
+      margin-top: 0.3rem;
     }
 
     .contact-direct-item {
       display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .contact-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 0, 98, 0.45);
+      display: grid;
+      place-items: center;
+      color: rgba(255, 0, 98, 0.85);
+      font-size: 0.85rem;
+      flex: 0 0 auto;
+      background: rgba(255, 0, 98, 0.08);
+    }
+
+    .contact-ico svg {
+      display: block;
     }
 
     .cdi-key {
@@ -1220,20 +2286,20 @@
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--black);
-      opacity: 0.25;
+      color: rgba(255, 246, 225, 0.55);
+      opacity: 1;
     }
 
     .cdi-val {
       font-size: clamp(0.85rem, 1.3vw, 1.1rem);
       font-weight: 300;
       font-style: italic;
-      color: var(--black);
+      color: rgba(255, 246, 225, 0.88);
       text-decoration: none;
       transition: color 0.2s;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(21, 21, 21, 0.08);
-      margin-bottom: 0.8rem;
+      padding-bottom: 0;
+      border-bottom: none;
+      margin-bottom: 0;
     }
 
     .cdi-val:hover {
@@ -1248,40 +2314,34 @@
       letter-spacing: 0.04em;
     }
 
-    .contact-socials-raw {
-      display: flex;
-      gap: 2rem;
-      margin-top: 0.5rem;
-    }
-
-    .csr-item {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--black);
-      text-decoration: none;
-      opacity: 0.2;
-      transition: opacity 0.2s, color 0.2s;
-    }
-
-    .csr-item:hover {
-      opacity: 1;
-      color: var(--pink);
-    }
-
-    /* Right — form, super stripped */
+    /* Right — form card (style capture) */
     .contact-form-raw {
       display: flex;
       flex-direction: column;
+      background: rgba(10, 10, 10, 0.55);
+      border: 1px solid rgba(255, 246, 225, 0.08);
+      border-radius: 16px;
+      padding: 1.4rem;
+      margin-top: 0;
+      align-self: start;
+      position: relative;
+      top: 2.7rem;
+      box-shadow: 0 18px 70px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .cfr-grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
 
     .cfr-field {
       display: flex;
       flex-direction: column;
-      padding: 0.6rem 0 1.2rem;
-      border-bottom: 1px solid rgba(21, 21, 21, 0.1);
-      margin-bottom: 0.2rem;
+      padding: 0.2rem 0 0.6rem;
+      border-bottom: none;
+      margin-bottom: 0;
     }
 
     .cfr-field label {
@@ -1289,32 +2349,36 @@
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--black);
-      opacity: 0.25;
+      color: rgba(255, 246, 225, 0.55);
+      opacity: 1;
       margin-bottom: 0.5rem;
     }
 
     .cfr-field input,
     .cfr-field textarea {
-      background: transparent;
-      border: none;
+      background: rgba(255, 246, 225, 0.06);
+      border: 1px solid rgba(255, 246, 225, 0.10);
+      border-radius: 10px;
       outline: none;
       font-family: "helvetica-lt-pro", sans-serif;
       font-size: 1rem;
       font-weight: 300;
       font-style: italic;
-      color: var(--black);
+      color: rgba(255, 246, 225, 0.92);
       resize: none;
       width: 100%;
+      padding: 0.85rem 0.95rem;
+      box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.35);
+      transition: border-color .2s, background .2s;
     }
 
     .cfr-field input::placeholder,
     .cfr-field textarea::placeholder {
-      color: rgba(21, 21, 21, 0.18);
+      color: rgba(255, 246, 225, 0.38);
     }
 
     .cfr-field textarea {
-      min-height: 80px;
+      min-height: 140px;
     }
 
     .cfr-send {
@@ -1322,6 +2386,58 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .cfr-send-note {
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: rgba(255, 246, 225, 0.45);
+    }
+
+    .cfr-send-btn {
+      width: 100%;
+      background: rgba(255, 0, 98, 0.75);
+      border: 1px solid rgba(255, 0, 98, 0.65);
+      color: rgba(255, 246, 225, 0.95);
+      padding: 0.95rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .15s, background .2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      box-shadow: 0 14px 40px rgba(255, 0, 98, 0.12);
+    }
+
+    .cfr-send-btn:hover { transform: translateY(-1px); background: rgba(255, 0, 98, 0.86); }
+
+    .cfr-send-btn .arr { transform: translateY(1px); }
+
+    .cfr-send {
+      margin-top: 1.15rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+
+    .cfr-field input:focus,
+    .cfr-field textarea:focus {
+      border-color: rgba(255, 0, 98, 0.55);
+      background: rgba(255, 246, 225, 0.08);
+    }
+
+    @media (max-width: 980px) {
+      .contact-page { padding: 4rem 2rem 0; }
+      .contact-body { grid-template-columns: 1fr; gap: 2.2rem; }
+      .cfr-grid2 { grid-template-columns: 1fr; }
+      .contact-form-raw { margin-top: 0; }
+      .contact-form-raw { top: 0; }
+      .contact-left { transform: none; }
+      #about .contact-page { padding-bottom: 3.25rem; }
     }
 
     .cfr-send-note {
@@ -1466,12 +2582,7 @@
     }
 
 
-    /* ═══ ABOUT PAGE ═══ */
-    #about {
-      background: var(--black);
-      padding-top: 44px;
-    }
-
+    /* ═══ ABOUT PAGE (legacy styles – kept only for .about-hero blocks) ═══ */
     .about-hero {
       padding: 6rem 3rem 4rem;
       display: grid;
@@ -1897,11 +3008,12 @@
       }
 
       .hero-typo-wrap {
-        padding: 1.2rem 0 1rem;
+        padding: 0.9rem 0 0.8rem;
+        margin-top: 0.8rem;
       }
 
       .hero-typo-img {
-        width: 88%;
+        width: 66%;
         right: 0;
       }
 
@@ -1923,7 +3035,7 @@
 
       /* MARQUEE */
       .marquee-wrap {
-        padding: 1rem 0;
+        padding: 0.8rem 0;
       }
 
       .marquee-item {
@@ -2126,8 +3238,7 @@
 
   <div id="loader">
     <div class="loader-card">
-      <div class="loader-top"><span class="loader-tag"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-            data-cfemail="563c233a3f3738783123333837243216313b373f3a7835393b">[email&#160;protected]</a></span><span
+      <div class="loader-top"><span class="loader-tag"><a href="mailto:julian.guenard@gmail.com">julian.guenard@gmail.com</a></span><span
           class="loader-badge">JG</span></div>
       <div class="loader-name">JULIAN&nbsp;<span class="thin">Guenard</span></div>
       <div class="loader-div"></div>
@@ -2135,8 +3246,7 @@
         <div class="loader-role">Designer Graphique</div>
         <div class="loader-school">EEGP&nbsp;·&nbsp;Angers</div>
         <div class="loader-dispo">Alt. sept.&nbsp;2026</div>
-        <div class="loader-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-            data-cfemail="4329362f2a222d6d2436262d22312703242e222a2f6d202c2e">[email&#160;protected]</a></div>
+        <div class="loader-email"><a href="mailto:julian.guenard@gmail.com">julian.guenard@gmail.com</a></div>
       </div>
       <div class="loader-bar-wrap">
         <div class="loader-bar" id="loaderBar"></div>
@@ -2180,19 +3290,18 @@
           <span class="marquee-item">Designer Graphique</span><span class="marquee-item">Designer Graphique</span>
         </div>
       </div>
-      <div class="hero-bottom" id="heroBand">
-        <p class="hero-intro">
-          Salut, moi c'est <strong>Julian Guenard.</strong><br>
-          Créatif depuis toujours, j'imagine et conçois des projets alliant design et utilité.
-          Actuellement en Bachelor Design Graphique à l'EEGP,
-          <span class="pink">je recherche une alternance pour septembre 2026.</span>
-        </p>
-        <div class="hero-meta-right">
-          <div
-            style="font-size:0.6rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--cream); opacity:0.4; margin-bottom:0.4rem;">
-            Designer Graphique</div>
-          <div style="font-size:0.6rem; font-weight:300; font-style:italic; color:var(--cream); opacity:0.3;">EEGP ·
-            Angers</div>
+      <div class="hero-pres fu d2">
+        <div class="hero-pres-card">
+          <div class="hero-pres-img">
+            <img class="hero-pres-photo" src="./PHOTO CV GUENARD.webp" alt="Photo de présentation">
+          </div>
+          <div class="hero-pres-text">
+            <div class="hero-pres-kicker">Présentation</div>
+            <div class="hero-pres-title">Moi c'est Julian</div>
+            <p class="hero-pres-desc">
+              En tant qu'étudiant en design graphique, j'explore les divers supports de création avec un attrait particulier pour la 3D que j’ai développé en autodidacte.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -2340,16 +3449,16 @@
           </div>
           <div class="c-card" onclick="handleCardClick(event,'projects',9)">
             <div class="c-card-img-wrap">
-              <img class="c-card-img" src="./version finale.webp">
+              <img class="c-card-img" src="./mocap affiche 2.webp">
               <div class="c-card-overlay">
-                <div class="c-card-cat">Graphisme 2D/3D</div>
-                <div class="c-card-title">Affiches</div>
-                <div class="c-card-desc">Série d'affiches graphiques entre composition et expérimentation.</div>
+                <div class="c-card-cat">Identité visuelle</div>
+                <div class="c-card-title">Trans musicales</div>
+                <div class="c-card-desc">Identité visuelle — recherches et déclinaisons graphiques.</div>
               </div>
             </div>
             <div class="c-card-foot">
-              <div class="c-card-foot-title">Affiches</div>
-              <div class="c-card-foot-cat">Graphisme 2D/3D</div>
+              <div class="c-card-foot-title">Trans musicales</div>
+              <div class="c-card-foot-cat">Identité visuelle</div>
             </div>
           </div>
           <div class="c-card" onclick="handleCardClick(event,'projects',10)">
@@ -2390,10 +3499,8 @@
     </div>
     <footer>
       <div class="ft-name">Julian <span>GUENARD</span></div>
-      <div class="ft-phone">+33 7 68 78 59 54</div><a
-        href="/cdn-cgi/l/email-protection#fd978891949c93d39a8898939c8f99bd9a909c9491d39e9290" class="ft-email"><span
-          class="__cf_email__"
-          data-cfemail="92f8e7fefbf3fcbcf5e7f7fcf3e0f6d2f5fff3fbfebcf1fdff">[email&#160;protected]</span></a>
+      <div class="ft-phone">+33 7 68 78 59 54</div><a href="mailto:julian.guenard@gmail.com"
+        class="ft-email">julian.guenard@gmail.com</a>
     </footer>
   </section>
 
@@ -2444,124 +3551,53 @@
     <div class="proj-detail" id="proj-detail">
       <button class="back-btn" onclick="closeDetail()">← Retour</button>
       <div class="detail-hdr">
-        <div class="detail-title" id="d-title"></div>
-        <div id="d-meta"></div>
-      </div>
-      <div class="detail-imgs">
-        <div class="detail-img-ph">IMG 01</div>
-        <div class="detail-img-ph">IMG 02</div>
-        <div class="detail-img-ph">IMG 03</div>
-        <div class="detail-img-ph">IMG 04</div>
-      </div>
-      <div class="detail-videos" id="detail-videos">
-        <div class="detail-video-block">
-          <video class="detail-video" controls playsinline preload="metadata">
-            <source src="Guenard-Julian-Showreel.mp4" type="video/mp4">
-            Ton navigateur ne supporte pas la lecture vidéo.
-          </video>
-          <div class="detail-video-desc">Description vidéo 01 (à remplacer).</div>
+        <div>
+          <div class="detail-kicker" id="d-kicker"></div>
+          <div class="detail-title" id="d-title"></div>
+          <p class="detail-desc detail-lead" id="d-desc"></p>
         </div>
-        <div class="detail-video-block">
-          <video class="detail-video" controls playsinline preload="metadata">
-            <source src="GUENARD-Julian-Générique-SG.mp4" type="video/mp4">
-            Ton navigateur ne supporte pas la lecture vidéo.
-          </video>
-          <div class="detail-video-desc">Description vidéo 02 (à remplacer).</div>
-        </div>
-        <div class="detail-video-block">
-          <video class="detail-video" controls playsinline preload="metadata">
-            <source src="ADWYSD VIDEO.mp4" type="video/mp4">
-            Ton navigateur ne supporte pas la lecture vidéo.
-          </video>
-          <div class="detail-video-desc">Description vidéo 03 (à remplacer).</div>
+        <div class="detail-meta" id="d-meta"></div>
+      </div>
+      <div class="detail-imgs" id="detailImgs"></div>
+      <div class="detail-videos" id="detail-videos"></div>
+      <div class="detail-pdf-wrap" id="detailPdfWrap" aria-label="Dossier PDF">
+        <div class="detail-pdf pdf-viewer is-mid">
+          <div class="pdf-viewer__hdr">
+            <div class="pdf-viewer__title">Dossier PDF</div>
+          </div>
+          <iframe
+            class="detail-pdf-frame"
+            id="peaudanePdfFrame"
+            title="Dossier PDF — Peau d’Âne"
+            src="./GUENARD-Julian-Dossier.pdf"
+            loading="lazy"></iframe>
+          <div class="detail-pdf-hint">Dossier PDF — défilement auto (survol = pause)</div>
         </div>
       </div>
-      <p class="detail-desc" id="d-desc"></p>
     </div>
     <footer>
       <div class="ft-name">Julian <span>GUENARD</span></div>
-      <div class="ft-phone">+33 7 68 78 59 54</div><a
-        href="/cdn-cgi/l/email-protection#87edf2ebeee6e9a9e0f2e2e9e6f5e3c7e0eae6eeeba9e4e8ea" class="ft-email"><span
-          class="__cf_email__"
-          data-cfemail="4329362f2a222d6d2436262d22312703242e222a2f6d202c2e">[email&#160;protected]</span></a>
+      <div class="ft-phone">+33 7 68 78 59 54</div><a href="mailto:julian.guenard@gmail.com"
+        class="ft-email">julian.guenard@gmail.com</a>
     </footer>
   </section>
 
   <!-- ABOUT -->
   <section class="page" id="about">
-    <div class="about-hero">
-      <div class="about-big">Qui<br>suis-<em>je ?</em></div>
-      <div class="about-text">
-        <p>Salut, je suis <strong>Julian Guenard</strong>, étudiant en 2e année de Bachelor Design Graphique à
-          l'<strong>EEGP d'Angers</strong>.</p>
-        <p>Créatif depuis toujours, mon approche du design mêle <span>expérimentation typographique</span>, rigueur
-          éditoriale et sens du détail.</p>
-        <p>Je suis passionné par la relation entre <span>typographie et identité</span> — la façon dont une lettre
-          devient symbole, un espace vide une tension.</p>
-        <p>Actuellement à la recherche d'une <span>alternance pour septembre 2026</span> dans un studio ou une agence
-          ambitieux.</p>
+    <div class="contact-page about-page">
+      <div class="contact-body">
+
+        <div class="contact-form-raw about-card about-card--cv-only">
+          <div class="about-cv" aria-label="CV">
+            <img
+              class="about-cv-img"
+              src="./NEW CV 2026.webp"
+              alt="CV — Julian Guenard"
+              loading="lazy">
+          </div>
+        </div>
+
       </div>
-    </div>
-    <div class="skills-sec">
-      <div class="sec-label">Compétences</div>
-      <div class="skills-grid">
-        <div class="skl-item">
-          <div class="skl-n">01</div>
-          <div class="skl-name">Graphisme 2D / 3D</div>
-          <div class="skl-bar-w">
-            <div class="skl-bar" style="width:90%"></div>
-          </div>
-        </div>
-        <div class="skl-item">
-          <div class="skl-n">02</div>
-          <div class="skl-name">Design Éditorial</div>
-          <div class="skl-bar-w">
-            <div class="skl-bar" style="width:85%"></div>
-          </div>
-        </div>
-        <div class="skl-item">
-          <div class="skl-n">03</div>
-          <div class="skl-name">Typographie</div>
-          <div class="skl-bar-w">
-            <div class="skl-bar" style="width:92%"></div>
-          </div>
-        </div>
-        <div class="skl-item">
-          <div class="skl-n">04</div>
-          <div class="skl-name">Branding</div>
-          <div class="skl-bar-w">
-            <div class="skl-bar" style="width:80%"></div>
-          </div>
-        </div>
-        <div class="skl-item">
-          <div class="skl-n">05</div>
-          <div class="skl-name">Motion Design</div>
-          <div class="skl-bar-w">
-            <div class="skl-bar" style="width:72%"></div>
-          </div>
-        </div>
-        <div class="skl-item">
-          <div class="skl-n">06</div>
-          <div class="skl-name">Illustration</div>
-          <div class="skl-bar-w">
-            <div class="skl-bar" style="width:78%"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="tools-sec">
-      <div class="sec-label">Outils & Logiciels</div>
-      <div class="tools-grid">
-        <span class="tool-tag">Adobe Illustrator</span><span class="tool-tag">Adobe Photoshop</span>
-        <span class="tool-tag">Adobe InDesign</span><span class="tool-tag">After Effects</span>
-        <span class="tool-tag">Figma</span><span class="tool-tag">Blender</span>
-        <span class="tool-tag">Cinema 4D</span><span class="tool-tag">Procreate</span>
-        <span class="tool-tag">Notion</span>
-      </div>
-    </div>
-    <div class="cv-sec">
-      <p class="cv-txt">Télécharger mon CV</p>
-      <a href="#" class="btn pink">CV PDF →</a>
     </div>
     <footer>
       <div class="ft-name">Julian <span>GUENARD</span></div>
@@ -2574,53 +3610,75 @@
   <section class="page" id="contact">
     <div class="contact-page">
 
-      <div class="contact-giant">
-        <span class="line1">Racontez</span><span class="line2">moi tout.</span>
-      </div>
-
-      <div class="contact-sep">
-        <div class="contact-sep-line"></div>
-        <span class="contact-sep-label">Designer Graphique — EEGP Angers — Alternance sept. 2026</span>
-        <div class="contact-sep-line"></div>
-      </div>
-
       <div class="contact-body">
 
-        <div class="contact-raw">
-          <p class="contact-raw-intro">
-            Tu as un projet,<br>une idée, ou une <strong>opportunité<br>d'alternance</strong> pour septembre 2026 ?<br>
-            Je serai ravi d'en parler.
-          </p>
-          <div class="contact-direct">
-            <div class="contact-direct-item">
-              <span class="cdi-key">Email</span>
-              <a href="mailto:julian.guenard@gmail.com" class="cdi-val">julian.guenard@gmail.com</a>
-            </div>
-            <div class="contact-direct-item">
-              <span class="cdi-key">Téléphone</span>
-              <span class="cdi-val">+33 7 68 78 59 54</span>
-            </div>
-            <div class="contact-direct-item">
-              <span class="cdi-key">Disponibilité</span>
-              <span class="cdi-val hot">↳ Alternance — Septembre 2026</span>
+        <div class="contact-left">
+          <div class="contact-hdr">
+            <div class="contact-title">
+              Une question&nbsp;?
+              <span class="script">Contactez-moi.</span>
             </div>
           </div>
-          <div class="contact-socials-raw">
-            <a href="#" class="csr-item">Behance</a>
-            <a href="#" class="csr-item">LinkedIn</a>
-            <a href="#" class="csr-item">Instagram</a>
+
+          <div class="contact-raw">
+            <p class="contact-raw-intro">
+              Vous avez un projet, une idée, ou simplement envie d’échanger&nbsp;?<br>
+              Je vous réponds dans les plus brefs délais.
+            </p>
+            <div class="contact-direct">
+              <div class="contact-direct-item">
+                <span class="contact-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 2h6" />
+                    <path d="M12 14V9" />
+                    <path d="M12 14l3-2" />
+                    <path d="M7.2 6.2a9 9 0 1 0 9.6 0" />
+                  </svg>
+                </span>
+                <div>
+                  <div class="cdi-key">Réponse</div>
+                  <div class="cdi-val">En moins de 24h</div>
+                </div>
+              </div>
+              <div class="contact-direct-item">
+                <span class="contact-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z" />
+                    <circle cx="12" cy="10" r="2.5" />
+                  </svg>
+                </span>
+                <div>
+                  <div class="cdi-key">Localisation</div>
+                  <div class="cdi-val">Angers et alentours</div>
+                </div>
+              </div>
+              <div class="contact-direct-item">
+                <span class="contact-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4.5 7.5h15v9h-15z" />
+                    <path d="M4.5 7.5 12 13l7.5-5.5" />
+                  </svg>
+                </span>
+                <div>
+                  <div class="cdi-key">Email</div>
+                  <a href="mailto:julian.guenard@gmail.com" class="cdi-val">julian.guenard@gmail.com</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="contact-form-raw">
           <form onsubmit="handleForm(event)">
-            <div class="cfr-field"><label>Nom</label><input type="text" placeholder="Votre nom" required></div>
-            <div class="cfr-field"><label>Email</label><input type="email" placeholder="votre@email.com" required></div>
-            <div class="cfr-field"><label>Sujet</label><input type="text" placeholder="Alternance, projet..."></div>
-            <div class="cfr-field"><label>Message</label><textarea placeholder="..." required></textarea></div>
+            <div class="cfr-grid2">
+              <div class="cfr-field"><label>Nom & prénom</label><input type="text" placeholder="Votre nom" required></div>
+              <div class="cfr-field"><label>Email</label><input type="email" placeholder="votre@email.com" required></div>
+            </div>
+            <div class="cfr-field"><label>Sujet</label><input type="text" placeholder="De quoi s'agit-il ?"></div>
+            <div class="cfr-field"><label>Message</label><textarea placeholder="Décrivez votre projet ou posez votre question." required></textarea></div>
             <div class="cfr-send">
               <span class="cfr-send-note">Je réponds sous 48h.</span>
-              <button type="submit" class="cfr-send-btn">Envoyer →</button>
+              <button type="submit" class="cfr-send-btn">Envoyer le message <span class="arr">→</span></button>
             </div>
           </form>
         </div>
@@ -2635,12 +3693,6 @@
     </footer>
   </section>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-
-
-  </script>
   <script>
     (function () {
       const bar = document.getElementById('loaderBar');
@@ -2676,17 +3728,62 @@
     }
 
     const projs = [
-      { id: 1, title: 'Friperie Peau d\'Âne', cat: 'identite', year: '2025', tools: 'Illustrator, InDesign', img: "./2ème mockup cuir.webp", desc: "Identité visuelle complète pour une friperie — logotype, palette chromatique, typographie et supports de communication." },
-      { id: 2, title: 'Nevada Mag', cat: 'editorial', year: '2025', tools: 'InDesign, Photoshop', img: "./ppmag.webp", desc: "Conception éditoriale d'un magazine aux ambiances désertiques et au cadrage photographique soigné." },
-      { id: 3, title: 'Pramuhk Specimen', cat: 'editorial', year: '2024', tools: 'InDesign, Illustrator', img: "./pecimen.webp", desc: "Specimen typographique éditorial présentant une fonte originale à travers une mise en page expressive." },
-      { id: 4, title: 'Tchernobyl Catalog', cat: 'editorial', year: '2024', tools: 'InDesign, Photoshop', img: "./CATALOG MOCKUP 1.webp", desc: "Catalogue éditorial explorant l'esthétique industrielle et post-apocalyptique de Tchernobyl." },
-      { id: 5, title: 'Pochettes de Musiques', cat: 'perso', year: '2025', tools: 'Illustrator, Photoshop', img: "./LA GADGI ET LORLOGE lune.webp", desc: "Série de pochettes d'albums aux univers visuels singuliers, entre collage, typographie et illustration." },
-      { id: 6, title: 'Handsomes Garbages', cat: 'perso', year: '2024', tools: 'Photoshop, Illustrator', img: "./eye on plate.webp", desc: "Projet personnel explorant la beauté dans l'ordinaire et le déchet — série de compositions graphiques." },
-      { id: 7, title: 'Animations', cat: 'motion', year: '2025', tools: 'After Effects, Illustrator', img: "./Capture d'écran 2026-04-20 203357.png", desc: "Animations motion design combinant typographie en mouvement, transitions et identité animée." },
-      { id: 8, title: 'Titrages', cat: 'typo', year: '2025', tools: 'Illustrator, Photoshop', img: "./TYPO PLANK.webp", desc: "Recherches typographiques autour de la mise en titre, du lettrage et de la composition de texte." },
-      { id: 9, title: 'Affiches', cat: 'graphisme', year: '2024', tools: 'Illustrator, Photoshop', img: "./version finale.webp", desc: "Série d'affiches graphiques entre composition abstraite, jeux de matières et expérimentation visuelle." },
-      { id: 10, title: 'Live Session Olam', cat: 'graphisme', year: '2025', tools: 'Illustrator, After Effects', img: "./Olam sto 1.webp", desc: "Direction artistique visuelle pour une live session musicale — visuels, motion et identité de scène." },
-      { id: 11, title: 'AVEC LA PAIX', cat: 'identite', year: '2025', tools: 'Illustrator, InDesign', img: "./test 1er logo11.webp", desc: "Identité visuelle engagée — logotype fort, système de couleurs et déclinaisons graphiques sur supports variés." },
+      { id: 1, title: 'Friperie Peau d\'Âne', cat: 'identite', year: '2025', tools: 'Illustrator, InDesign, Photoshop', img: "./2ème mockup cuir.webp", desc: "Projet fictif de cours — identité visuelle complète pour une friperie : logotype, palette chromatique, typographie et supports de communication.", gallery: ["./peut etre mockup panneau magasin.webp", "./mockup paperie.webp", "./Mockup stickers.webp", "./étiquetquettes.webp", "./mockup shotp.webp", "./tee 1.webp", "./mockup bag cart.webp", "./peau d'ane site.webp"], pdf: "./GUENARD-Julian-Dossier.pdf" },
+      { id: 2, title: 'Nevada Mag', cat: 'editorial', year: '2025', tools: 'InDesign, Photoshop', img: "./ppmag.webp", desc: "Conception éditoriale d'un magazine aux ambiances désertiques et au cadrage photographique soigné.", gallery: ["./ppmag.webp", "./Free A4 magazine + Overlay Shadow Mockup.webp", "./nevada-03.webp", "./mockup explosion.webp"], video: "./Capture d'écran 2026-01-07 175856.mp4", videoRate: 0.28, videoWide: true },
+      { id: 3, title: 'Pramuhk Specimen', cat: 'editorial', year: '2025', tools: 'InDesign, Illustrator', img: "./pecimen.webp", desc: "Specimen typographique éditorial présentant une fonte originale à travers une mise en page expressive.", galleryLayout: "specimen-grid", gallery: [{ type: "image", src: "./pecimen.webp", title: "Mockup" }, { type: "pdf", src: "./GUENARD-Julian-specimen.pdf", title: "Spécimen (PDF)" }, { type: "pdf", src: "./GUENARD-Julian-specimen-dossier.pdf", title: "Dossier (PDF)" }] },
+      { id: 4, title: 'Tchernobyl Catalog', cat: 'editorial', year: '2025', tools: 'InDesign, Photoshop', img: "./CATALOG MOCKUP 1.webp", desc: "Catalogue éditorial explorant l'esthétique industrielle et post-apocalyptique de Tchernobyl.", gallery: ["./CATALOG MOCKUP 1.webp", "./mocap 2.webp", "./Bus_Stop_Citylight_Mockup.webp", "./mockup bus.webp"], video: "./Capture d'écran 2026-02-06 155022.mp4", videoRate: 0.28, videoDesc: "Vidéo du projet.", videoWide: true },
+      { id: 5, title: 'Pochettes de Musiques', cat: 'perso', year: '2025', tools: 'Illustrator, Photoshop', img: "./LA GADGI ET LORLOGE lune.webp", desc: "Série de pochettes d'albums aux univers visuels singuliers, entre collage, typographie et illustration.", galleryLayout: "album-grid", gallery: ["./Cover Ivori.webp", "./Back cover ptet bien2.webp", "./Cover finale NV SAISON.webp", "./tracklist nv saison.webp", "./Sex on the beach cover.webp", "./LA GADGI ET LORLOGE lune.webp", "./Alt3.webp", "./COVER WALL.webp", "./COVER FINALE 5.webp", "./écoeurécover2.webp"] },
+      { id: 6, title: 'Handsomes Garbages', cat: 'perso', year: '2025', tools: 'Photoshop, Illustrator', img: "./eye on plate.webp", desc: "Projet personnel explorant la beauté dans l'ordinaire et le déchet — série de compositions graphiques.", galleryLayout: "nine-grid", gallery: ["./eye on plate.webp", "./xvf.webp", "./fds.webp", "./THE QUEEN'S GAMBIT2.webp", "./THE QUEENS GAMBIT3.webp", "./ptapim chess.webp", "./PTAAPIMSATUREenjs.webp", "./PAPERCROW.webp", "./HEAD IN THE SHOWER.webp"] },
+      { id: 7, title: 'Animations', cat: 'motion', year: '2025', tools: 'After Effects, Illustrator', img: "./Capture d'écran 2026-04-20 203357.png", desc: "Animations motion design combinant typographie en mouvement, transitions et identité animée.", videos: [{ src: "Guenard-Julian-Showreel.mp4", desc: "Showreel.", rate: 1 }, { src: "GUENARD-Julian-Générique-SG.mp4", desc: "Générique.", rate: 1 }, { src: "ADWYSD VIDEO.mp4", desc: "Animation.", rate: 1 }] },
+      { id: 8, title: 'Titrages', cat: 'typo', year: '2025', tools: 'Illustrator, Photoshop', img: "./TYPO PLANK.webp", desc: "Recherches typographiques autour de la mise en titre, du lettrage et de la composition de texte.", galleryLayout: "titrage-grid", gallery: ["./TYPO PLANK.webp", "./typo fake2.webp", "./typo kilde.webp"] },
+      {
+        id: 9,
+        title: 'Trans musicales',
+        cat: 'identite',
+        year: '2026',
+        tools: 'Illustrator, Photoshop',
+        img: "./version finale.webp",
+        desc: "Identité visuelle — recherches et déclinaisons graphiques.",
+        galleryLayout: "ten-grid",
+        tenCases: [
+        "./version finale.webp",
+        "./mocap affiche 2.webp",
+          "./dépliant mockup.webp",
+          "./carte postale mockup.webp",
+          "./mockup phone.webp",
+          "./Mockup site.webp",
+          "./Untitled.webp",
+          "./wristband.webp",
+          "./moccap.webp",
+          "./mocakp tee.webp"
+        ]
+      },
+      {
+        id: 10,
+        title: 'Live Session Olam',
+        cat: 'graphisme',
+        year: '2026',
+        tools: 'Illustrator, After Effects',
+        img: "./Olam sto 1.webp",
+        desc: "Direction artistique visuelle pour une live session musicale — visuels, motion et identité de scène.",
+        galleryLayout: "live-session",
+        liveSquares: ["./Olam post.webp", "./face olam.webp", "./WhatsApp Image 2026-04-24 at 10.32.37.webp", "./Capture d'écran 2026-04-24 105005.webp", "./Capture d'écran 2026-04-24 110149.webp", "./Capture d'écran 2026-04-24 110250.webp"],
+        livePortraits: ["./Olam sto 2.webp", "./WhatsApp Image 2026-04-24 at 10.32.36.webp"],
+        youtubeEmbed: "https://youtu.be/VM39a1GAVjQ?si=1ZKiepxsXJIcfay6"
+      },
+      {
+        id: 11,
+        title: 'AVEC LA PAIX',
+        cat: 'identite',
+        year: '2025',
+        tools: 'Illustrator, InDesign',
+        img: "./test 1er logo11.webp",
+        desc: "Identité visuelle engagée — logotype fort, système de couleurs et déclinaisons graphiques sur supports variés.",
+        galleryLayout: "avec-paix",
+        paixHero: "./test 1er logo11.webp",
+        paixRects: ["./ALP PATRON TEST.webp", "./Julian-Mockup-exemple impression.webp"],
+        paixPortraits: ["./alp tee 1.webp", "AFFICHE TEST.webp"]
+      },
     ];
     let curFilter = 'all';
     function renderProjs() {
@@ -2706,30 +3803,370 @@
       document.querySelectorAll('.flt-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active'); renderProjs();
     }
+
+    function clamp255(n) { return Math.max(0, Math.min(255, n | 0)); }
+    function mix(a, b, t) { return a + (b - a) * t; }
+    function rgbToRgba(rgb, a) { return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${a})`; }
+
+    async function getDominantColor(src) {
+      return await new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.onload = () => {
+          try {
+            const w = 32, h = 32;
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            const ctx = c.getContext('2d', { willReadFrequently: true });
+            if (!ctx) return resolve(null);
+            ctx.drawImage(img, 0, 0, w, h);
+            const data = ctx.getImageData(0, 0, w, h).data;
+
+            let rSum = 0, gSum = 0, bSum = 0, weightSum = 0;
+            for (let i = 0; i < data.length; i += 4) {
+              const a = data[i + 3];
+              if (a < 200) continue;
+              const r = data[i], g = data[i + 1], b = data[i + 2];
+
+              // Ignore quasi-blancs / quasi-noirs (souvent fonds)
+              const max = Math.max(r, g, b), min = Math.min(r, g, b);
+              if (max < 18) continue;
+              if (min > 235) continue;
+
+              const sat = (max - min) / (max || 255);
+              const wgt = 0.5 + sat * 1.8;
+              rSum += r * wgt; gSum += g * wgt; bSum += b * wgt;
+              weightSum += wgt;
+            }
+
+            if (!weightSum) return resolve(null);
+            resolve({
+              r: clamp255(rSum / weightSum),
+              g: clamp255(gSum / weightSum),
+              b: clamp255(bSum / weightSum),
+            });
+          } catch (_) { resolve(null); }
+        };
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+    }
+
+    async function applyProjectGradientFromImage(src) {
+      const root = document.documentElement;
+      if (!root || !src) return;
+      const dom = await getDominantColor(src);
+      if (!dom) return;
+
+      // A = dominante, B = variante assombrie/désaturée
+      const b = {
+        r: clamp255(mix(dom.r, 0, 0.35)),
+        g: clamp255(mix(dom.g, 0, 0.35)),
+        b: clamp255(mix(dom.b, 0, 0.35)),
+      };
+      root.style.setProperty('--proj-accent-a', rgbToRgba(dom, 0.78));
+      root.style.setProperty('--proj-accent-b', rgbToRgba(b, 0.54));
+    }
+
+    function resetProjectGradient() {
+      const root = document.documentElement;
+      if (!root) return;
+      root.style.setProperty('--proj-accent-a', 'rgba(255, 0, 98, 0)');
+      root.style.setProperty('--proj-accent-b', 'rgba(21, 21, 21, 0)');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function normalizeYouTubeEmbedUrl(input) {
+      const raw = String(input || '').trim();
+      if (!raw) return '';
+
+      // Déjà un lien embed (youtube.com/embed ou youtube-nocookie.com/embed)
+      if (/youtube(?:-nocookie)?\.com\/embed\//i.test(raw)) return raw;
+
+      // Lien court youtu.be/VIDEO_ID
+      const short = raw.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+      if (short && short[1]) return `https://www.youtube-nocookie.com/embed/${short[1]}`;
+
+      // Lien classique youtube.com/watch?v=VIDEO_ID
+      const watch = raw.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
+      if (watch && watch[1]) return `https://www.youtube-nocookie.com/embed/${watch[1]}`;
+
+      // Fallback (on laisse tel quel)
+      return raw;
+    }
+
+    function renderDetailGallery(p) {
+      const wrap = document.getElementById('detailImgs');
+      if (!wrap) return;
+
+      const items = Array.isArray(p.gallery) ? p.gallery : [];
+      const layout = p && p.galleryLayout ? String(p.galleryLayout) : '';
+      const firstUnframed = !!(p && p.galleryFirstUnframed);
+      wrap.classList.toggle('is-column', layout === 'column');
+      wrap.classList.toggle('is-specimen-grid', layout === 'specimen-grid');
+      wrap.classList.toggle('is-nine-grid', layout === 'nine-grid');
+      wrap.classList.toggle('is-ten-grid', layout === 'ten-grid');
+      wrap.classList.toggle('is-album-grid', layout === 'album-grid');
+      wrap.classList.toggle('is-titrage-grid', layout === 'titrage-grid');
+      wrap.classList.toggle('is-live-session', layout === 'live-session');
+      wrap.classList.toggle('is-avec-paix', layout === 'avec-paix');
+
+      if (layout === 'ten-grid') {
+        const raw = Array.isArray(p && p.tenCases) ? p.tenCases : [];
+        const list = raw.map(x => String(x || '').trim()).filter(Boolean);
+        wrap.innerHTML = list.map((src, i) => {
+          const alt = `${p.title} — visuel ${String(i + 1).padStart(2, '0')}`;
+          return `<div class="detail-img-ph"><img src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy"></div>`;
+        }).join('');
+        return;
+      }
+
+      if (layout === 'live-session') {
+        const squares = Array.isArray(p.liveSquares) ? p.liveSquares : [];
+        const portraits = Array.isArray(p.livePortraits) ? p.livePortraits : [];
+        const yt = normalizeYouTubeEmbedUrl(p && p.youtubeEmbed);
+
+        const sq = Array.from({ length: 6 }).map((_, i) => {
+          const src = squares[i] ? String(squares[i]) : '';
+          const alt = `${p.title} — carré ${String(i + 1).padStart(2, '0')}`;
+          return `
+            <div class="ls-cell is-square">
+              ${src ? `<img src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy">` : `<div class="ls-ph">Carré ${String(i + 1).padStart(2, '0')}</div>`}
+            </div>
+          `;
+        }).join('');
+
+        const pr = Array.from({ length: 2 }).map((_, i) => {
+          const src = portraits[i] ? String(portraits[i]) : '';
+          const alt = `${p.title} — portrait A3 ${String(i + 1).padStart(2, '0')}`;
+          return `
+            <div class="ls-cell is-a3">
+              ${src ? `<img src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy">` : `<div class="ls-ph">Portrait A3 ${String(i + 1).padStart(2, '0')}</div>`}
+            </div>
+          `;
+        }).join('');
+
+        wrap.innerHTML = `
+          <div class="ls-grid ls-grid-squares">${sq}</div>
+          <div class="ls-grid ls-grid-portraits">${pr}</div>
+          <div class="ls-youtube">
+            ${yt ? `<iframe src="${escHtml(yt)}" title="${escHtml(p.title + ' — YouTube')}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>` : `<div class="ls-ph">Ajoute ton lien YouTube</div>`}
+          </div>
+        `;
+        return;
+      }
+
+      if (layout === 'avec-paix') {
+        const hero = (p && p.paixHero) ? String(p.paixHero) : '';
+        const rects = Array.isArray(p.paixRects) ? p.paixRects : [];
+        const portraits = Array.isArray(p.paixPortraits) ? p.paixPortraits : [];
+
+        const rectHtml = Array.from({ length: 2 }).map((_, i) => {
+          const src = rects[i] ? String(rects[i]) : '';
+          const alt = `${p.title} — rectangle ${String(i + 1).padStart(2, '0')}`;
+          return `
+            <div class="ap-cell is-rect">
+              ${src ? `<img src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy">` : `<div class="ls-ph">Rectangle ${String(i + 1).padStart(2, '0')}</div>`}
+            </div>
+          `;
+        }).join('');
+
+        const prHtml = Array.from({ length: 2 }).map((_, i) => {
+          const src = portraits[i] ? String(portraits[i]) : '';
+          const alt = `${p.title} — portrait ${String(i + 1).padStart(2, '0')}`;
+          return `
+            <div class="ap-cell is-portrait">
+              ${src ? `<img src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy">` : `<div class="ls-ph">Portrait ${String(i + 1).padStart(2, '0')}</div>`}
+            </div>
+          `;
+        }).join('');
+
+        wrap.innerHTML = `
+          <div class="ap-grid">
+            <div class="ap-row ap-hero">
+              <div class="ap-cell is-hero">
+                ${hero ? `<img src="${escHtml(hero)}" alt="${escHtml(p.title + ' — visuel principal')}" loading="lazy">` : `<div class="ls-ph">Visuel principal</div>`}
+              </div>
+            </div>
+            <div class="ap-row ap-rects">${rectHtml}</div>
+            <div class="ap-row ap-portraits">${prHtml}</div>
+          </div>
+        `;
+        return;
+      }
+
+      if (!items.length) {
+        wrap.innerHTML = `
+          <div class="detail-img-ph">IMG 01</div>
+          <div class="detail-img-ph">IMG 02</div>
+          <div class="detail-img-ph">IMG 03</div>
+          <div class="detail-img-ph">IMG 04</div>
+        `;
+        return;
+      }
+
+      if (layout === 'specimen-grid') {
+        const imgItem = items[0] || {};
+        const pdfRight = items[1] || {};
+        const pdfBottom = items[2] || {};
+
+        const imgSrc = (imgItem && typeof imgItem === 'object') ? (imgItem.src || '') : String(imgItem || '');
+        const imgAlt = `${p.title} — visuel 01`;
+
+        const rightTitle = (pdfRight && typeof pdfRight === 'object') ? (pdfRight.title || 'PDF') : 'PDF';
+        const rightSrc = (pdfRight && typeof pdfRight === 'object') ? (pdfRight.src || '') : '';
+
+        const bottomTitle = (pdfBottom && typeof pdfBottom === 'object') ? (pdfBottom.title || 'PDF') : 'PDF';
+        const bottomSrc = (pdfBottom && typeof pdfBottom === 'object') ? (pdfBottom.src || '') : '';
+
+        wrap.innerHTML = `
+          <div class="specimen-container">
+            <div class="specimen-top">
+              <div class="specimen-img">
+                <img src="${escHtml(imgSrc)}" alt="${escHtml(imgAlt)}" loading="lazy">
+              </div>
+              <div class="pdf-viewer is-case">
+                <div class="pdf-viewer__hdr">
+                  <div class="pdf-viewer__title">${escHtml(rightTitle)}</div>
+                </div>
+                <iframe src="${escHtml(rightSrc)}" title="${escHtml(rightTitle)}" loading="lazy"></iframe>
+              </div>
+            </div>
+            <div class="pdf-viewer is-tall">
+              <div class="pdf-viewer__hdr">
+                <div class="pdf-viewer__title">${escHtml(bottomTitle)}</div>
+              </div>
+              <iframe src="${escHtml(bottomSrc)}" title="${escHtml(bottomTitle)}" loading="lazy"></iframe>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      wrap.innerHTML = items.map((it, idx) => {
+        const obj = (it && typeof it === 'object') ? it : { type: 'image', src: String(it) };
+        const type = obj.type || 'image';
+        const src = obj.src || '';
+        const title = obj.title || '';
+
+        if (type === 'pdf') {
+          return `
+            <div class="pdf-viewer is-tall">
+              <div class="pdf-viewer__hdr">
+                <div class="pdf-viewer__title">${escHtml(title || 'PDF')}</div>
+              </div>
+              <iframe src="${escHtml(src)}" title="${escHtml(title || (p.title + ' — PDF'))}" loading="lazy"></iframe>
+            </div>
+          `;
+        }
+
+        const extraClass =
+          (p.id === 1 && idx === 0) ? 'crop-peaudane-tl'
+          : (p.id === 8 && idx === 0) ? 'crop-titrage-hero'
+          : (p.id === 8 && idx === items.length - 1) ? 'crop-titrage-last'
+          : '';
+        const alt = `${p.title} — visuel ${String(idx + 1).padStart(2, '0')}`;
+        if (layout === 'column') {
+          if (firstUnframed && idx === 0) {
+            return `<img class="detail-hero-img" src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy">`;
+          }
+          return `
+            <div class="detail-card media">
+              ${title ? `<div class="detail-card-hdr">${escHtml(title)}</div>` : ''}
+              <img class="${extraClass}" src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy">
+            </div>
+          `;
+        }
+        return `<div class="detail-img-ph"><img class="${extraClass}" src="${escHtml(src)}" alt="${escHtml(alt)}" loading="lazy"></div>`;
+      }).join('');
+    }
+
+    function renderDetailPdf(p) {
+      const pdfWrap = document.getElementById('detailPdfWrap');
+      const pdfFrame = document.getElementById('peaudanePdfFrame');
+      if (!pdfWrap || !pdfFrame) return;
+      if (p && p.pdf) {
+        pdfFrame.src = p.pdf;
+        pdfWrap.style.display = '';
+      } else {
+        pdfWrap.style.display = 'none';
+      }
+    }
+
+    function renderDetailVideo(p) {
+      const vids = document.getElementById('detail-videos');
+      if (!vids) return;
+
+      const list = Array.isArray(p && p.videos) ? p.videos : (p && p.video ? [{ src: p.video, desc: p.videoDesc, rate: p.videoRate }] : []);
+      if (!list.length) {
+        vids.classList.remove('open');
+        vids.innerHTML = '';
+        return;
+      }
+
+      const wide = !!(p && p.videoWide);
+      vids.innerHTML = list.map((it, idx) => {
+        const src = (it && typeof it === 'object') ? (it.src || '') : String(it || '');
+        const desc = (it && typeof it === 'object') ? (it.desc || '') : '';
+        return `
+          <div class="detail-video-block ${wide ? 'is-wide' : ''}">
+            <video class="detail-video proj-detail-video" data-idx="${idx}" controls playsinline preload="metadata">
+              <source src="${src}" type="video/mp4">
+              Ton navigateur ne supporte pas la lecture vidéo.
+            </video>
+            ${desc ? `<div class="detail-video-desc">${desc}</div>` : ``}
+          </div>
+        `;
+      }).join('');
+      vids.classList.add('open');
+
+      vids.querySelectorAll('video.proj-detail-video').forEach((v, i) => {
+        const item = list[i];
+        const rate = (item && typeof item === 'object' && typeof item.rate === 'number') ? item.rate : (typeof p.videoRate === 'number' ? p.videoRate : 1);
+        const applyRate = () => { try { v.playbackRate = rate; } catch (_) {} };
+        v.addEventListener('loadedmetadata', applyRate, { once: true });
+        applyRate();
+      });
+    }
+
     function openDetail(id) {
       const p = projs.find(x => x.id === id);
+      const kicker = document.getElementById('d-kicker');
       document.getElementById('d-title').textContent = p.title;
-      document.getElementById('d-meta').innerHTML = `<div class="meta-row"><span>Catégorie</span><span>${p.cat}</span></div><div class="meta-row"><span>Année</span><span>${p.year}</span></div><div class="meta-row"><span>Outils</span><span>${p.tools}</span></div>`;
+      if (kicker) kicker.textContent = p.cat || '';
+      document.getElementById('d-meta').innerHTML = `
+        <div class="meta-chip"><span class="k">Année</span><span class="v">${p.year || ''}</span></div>
+        <div class="meta-chip"><span class="k">Outils</span><span class="v">${p.tools || ''}</span></div>
+      `;
       document.getElementById('d-desc').textContent = p.desc;
+      renderDetailGallery(p);
+      renderDetailPdf(p);
+      renderDetailVideo(p);
+      if (p.img) applyProjectGradientFromImage(p.img);
+      document.body.classList.add('proj-gradient-on');
       document.getElementById('proj-grid-wrap').style.display = 'none';
       document.querySelector('.proj-hero').style.display = 'none';
       const imgs = document.querySelector('.detail-imgs');
       if (imgs) imgs.style.display = id === 7 ? 'none' : '';
-      const vids = document.getElementById('detail-videos');
-      if (vids) vids.classList.toggle('open', id === 7);
       document.getElementById('proj-detail').classList.add('open');
       window.scrollTo(0, 0);
     }
     function closeDetail() {
       const d = document.getElementById('proj-detail'); if (!d) return;
       d.classList.remove('open');
+      resetProjectGradient();
+      document.body.classList.remove('proj-gradient-on');
+      renderDetailPdf({});
+      renderDetailVideo({});
       const imgs = document.querySelector('.detail-imgs');
       if (imgs) imgs.style.display = '';
       const vids = document.getElementById('detail-videos');
-      if (vids) {
-        vids.classList.remove('open');
-        vids.querySelectorAll('video').forEach(v => { try { v.pause(); v.currentTime = 0; } catch (_) {} });
-      }
+      if (vids) vids.querySelectorAll('video').forEach(v => { try { v.pause(); v.currentTime = 0; } catch (_) {} });
       const gw = document.getElementById('proj-grid-wrap'); const ph = document.querySelector('.proj-hero');
       if (gw) gw.style.display = ''; if (ph) ph.style.display = '';
     }
@@ -2770,10 +4207,108 @@
       if (btn) { btn.textContent = 'Envoyé ✓'; btn.style.background = 'var(--pink)'; btn.style.borderColor = 'var(--pink)'; btn.disabled = true; }
     }
 
+    // LIGHTBOX (galeries)
+    function initLightbox() {
+      const lb = document.getElementById('imgLightbox');
+      const lbImg = document.getElementById('imgLightboxMedia');
+      if (!lb || !lbImg) return;
+
+      function open(src, alt) {
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function close() {
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
+        document.body.style.overflow = '';
+      }
+
+      document.addEventListener('click', e => {
+        const img = e.target && e.target.closest ? e.target.closest('.detail-imgs img') : null;
+        if (img) {
+          open(img.currentSrc || img.src, img.alt);
+          return;
+        }
+        if (lb.classList.contains('open') && (e.target === lb || e.target === lbImg)) {
+          close();
+        }
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && lb.classList.contains('open')) close();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLightbox);
+    } else {
+      initLightbox();
+    }
+
+    // PDF auto-scroll (lent) dans la galerie Peau d'Âne
+    function initPdfAutoScroll() {
+      const frame = document.getElementById('peaudanePdfFrame');
+      if (!frame) return;
+
+      let timer = null;
+      let paused = false;
+
+      function stop() {
+        if (timer) window.clearInterval(timer);
+        timer = null;
+      }
+
+      function start() {
+        if (timer) return;
+        timer = window.setInterval(() => {
+          if (paused) return;
+          try {
+            const w = frame.contentWindow;
+            if (!w) return;
+            const d = w.document && w.document.scrollingElement;
+            if (!d) {
+              w.scrollBy(0, 0.25);
+              return;
+            }
+            if (d.scrollTop + d.clientHeight >= d.scrollHeight - 2) d.scrollTop = 0;
+            else d.scrollTop += 0.25;
+          } catch (_) {
+            // Certains navigateurs bloquent le scroll programmatique du viewer PDF.
+            stop();
+          }
+        }, 20);
+      }
+
+      frame.addEventListener('load', () => {
+        stop();
+        start();
+      });
+
+      frame.addEventListener('mouseenter', () => { paused = true; });
+      frame.addEventListener('mouseleave', () => { paused = false; });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPdfAutoScroll);
+    } else {
+      initPdfAutoScroll();
+    }
+
     // INIT
     renderProjs();
     updateCarBtns();
   </script>
+
+  <!-- Lightbox global (doit être au niveau du body pour rester centré) -->
+  <div class="img-lightbox" id="imgLightbox" aria-hidden="true">
+    <img id="imgLightboxMedia" alt="">
+  </div>
 </body>
 
 </html>
